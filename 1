@@ -1,0 +1,40 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 資料
+x = np.array([4.0, 4.2, 4.5, 4.7, 5.1, 5.5, 5.9, 6.3])
+y = np.array([102.6, 113.2, 130.1, 142.1, 167.5, 195.1, 224.9, 256.8])
+
+# (a) 二次多項式 least squares approximation
+coeffs_quad = np.polyfit(x, y, 2)
+y_quad = np.polyval(coeffs_quad, x)
+error_quad = np.sum((y - y_quad) ** 2)
+print("== (a) 二次多項式 least squares ==")
+print(f"方程式: y = {coeffs_quad[0]:.4f} x^2 + {coeffs_quad[1]:.4f} x + {coeffs_quad[2]:.4f}")
+print(f"誤差 SSE = {error_quad:.4f}\n")
+
+# (b) 指數型 least squares approximation
+ln_y = np.log(y)
+coeffs_exp = np.polyfit(x, ln_y, 1)
+a = coeffs_exp[0]
+ln_b = coeffs_exp[1]
+b = np.exp(ln_b)
+y_exp = b * np.exp(a * x)
+error_exp = np.sum((y - y_exp) ** 2)
+print("== (b) 指數型 least squares ==")
+print(f"方程式: y = {b:.4f} * e^({a:.4f} * x)")
+print(f"誤差 SSE = {error_exp:.4f}\n")
+
+# (c) 冪次型 least squares approximation
+ln_x = np.log(x)
+coeffs_power = np.polyfit(ln_x, ln_y, 1)
+n = coeffs_power[0]
+ln_b2 = coeffs_power[1]
+b2 = np.exp(ln_b2)
+y_power = b2 * x ** n
+error_power = np.sum((y - y_power) ** 2)
+print("== (c) 冪次型 least squares ==")
+print(f"方程式: y = {b2:.4f} * x^{n:.4f}")
+print(f"誤差 SSE = {error_power:.4f}\n")
+
+
