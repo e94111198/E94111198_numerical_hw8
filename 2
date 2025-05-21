@@ -1,0 +1,39 @@
+import numpy as np
+from scipy.integrate import quad
+import matplotlib.pyplot as plt
+
+# 定義函數 f(x)
+def f(x):
+    return 0.5 * np.cos(x) + 0.25 * np.sin(2 * x)
+
+# 定義區間
+a_int, b_int = -1, 1
+
+# 計算 A 矩陣元素（積分值）
+A11, _ = quad(lambda x: x**4, a_int, b_int)
+A12, _ = quad(lambda x: x**3, a_int, b_int)
+A13, _ = quad(lambda x: x**2, a_int, b_int)
+A22, _ = quad(lambda x: x**2, a_int, b_int)
+A23, _ = quad(lambda x: x, a_int, b_int)
+A33, _ = quad(lambda x: 1, a_int, b_int)
+
+# 組 A 矩陣（對稱矩陣）
+A = np.array([
+    [A11, A12, A13],
+    [A12, A22, A23],
+    [A13, A23, A33]
+])
+
+# 計算 B 向量元素（積分值）
+B1, _ = quad(lambda x: x**2 * f(x), a_int, b_int)
+B2, _ = quad(lambda x: x * f(x), a_int, b_int)
+B3, _ = quad(lambda x: f(x), a_int, b_int)
+
+B = np.array([B1, B2, B3])
+
+# 解聯立方程組
+coeffs = np.linalg.solve(A, B)
+a, b, c = coeffs
+
+print("== 答案 ==")
+print(f"P(x) = {a:.6f} x^2 + {b:.6f} x + {c:.6f}")
