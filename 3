@@ -1,21 +1,20 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy.integrate import quad
+import matplotlib.pyplot as plt
 
-# 設定參數
+# (a) 設定參數與離散點
 m = 16
-n = 4  # 次數
-xj = np.linspace(0, 1, m, endpoint=False)
-fj = xj**2 * np.sin(xj)
+n = 4  # S4 的次數
+xj = np.linspace(0, 1, m, endpoint=False)  # 均勻離散點
+fj = xj**2 * np.sin(xj)                   # f(x) = x^2 * sin(x)
 
 # 計算傅立葉係數
-a0 = np.sum(fj) / m
+a0 = np.sum(fj) / m                       # a0
 ak = np.zeros(n)
 bk = np.zeros(n)
-
 for k in range(1, n+1):
-    ak[k-1] = np.sum(fj * np.cos(2 * np.pi * k * xj)) * 2 / m
-    bk[k-1] = np.sum(fj * np.sin(2 * np.pi * k * xj)) * 2 / m
+    ak[k-1] = (2 / m) * np.sum(fj * np.cos(2 * np.pi * k * xj))
+    bk[k-1] = (2 / m) * np.sum(fj * np.sin(2 * np.pi * k * xj))
 
 # 定義 S4(x)
 def S4(x):
@@ -24,22 +23,23 @@ def S4(x):
         result += ak[k-1] * np.cos(2 * np.pi * k * x) + bk[k-1] * np.sin(2 * np.pi * k * x)
     return result
 
-# b. 計算 ∫_0^1 S_4(x) dx
+# (b) 計算 ∫_0^1 S4(x) dx
 integral_S4, _ = quad(S4, 0, 1)
 
-# c. 計算 ∫_0^1 x^2 sin(x) dx
+# (c) 計算真實積分 ∫_0^1 x^2*sin(x) dx
 true_integral, _ = quad(lambda x: x**2 * np.sin(x), 0, 1)
 
-# d. 計算誤差 E(S_4)
+# (d) 計算誤差 E(S4) = Σ [f(xj) - S4(xj)]^2
 S4_vals = S4(xj)
 error = np.sum((fj - S4_vals)**2)
 
 # 輸出結果
-print(f"a0 = {a0}")
-print(f"ak = {ak}")
-print(f"bk = {bk}")
-print(f"Integral of S4(x) from 0 to 1: {integral_S4}")
-print(f"True integral of x^2*sin(x) from 0 to 1: {true_integral}")
-print(f"Error E(S4): {error}")
-
+print("(a) Fourier coefficients:")
+print(f"  a0 = {a0}")
+print(f"  ak = {ak}")
+print(f"  bk = {bk}")
+print()
+print(f"(b) ∫ S₄(x) dx ≈ {integral_S4:.8f}")
+print(f"(c) ∫ x²·sin(x) dx ≈ {true_integral:.8f}")
+print(f"(d) Error E(S₄) ≈ {error:.8e}")
 
